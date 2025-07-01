@@ -29,7 +29,7 @@ function preload() {
      // map made with Tiled in JSON format
     this.load.tilemapTiledJSON('map', 'assets/map.json');
     // tiles in spritesheet 
-    this.load.spritesheet('tiles', 'assets/tiles.png', {frameWidth: 70, frameHeight: 70});
+   this.load.image('tiles', 'assets/tiles.png'); // {frameWidth: 70, frameHeight: 70});
     // simple coin image
     this.load.image('coin', 'assets/coinGold.png');
     // player animations
@@ -95,6 +95,9 @@ function create() {
         fill: '#ffffff'
     });
     text.setScrollFactor(0);
+    cursors = this.input.keyboard.createCursorKeys();
+this.physics.add.collider(groundLayer, player); // player collides with ground
+
 }
 
 function update(time, delta) {    
@@ -113,6 +116,10 @@ function update(time, delta) {
         player.body.setVelocityX(0);
         player.anims.play('idle', true);
     }  
+     // 🟢 JUMPING (add this block)
+    if (cursors.up.isDown && player.body.blocked.down) {
+        player.setVelocityY(-330); // jump height (adjust as needed)
+    }
 }
 
 // the player will collide with this layer
@@ -126,4 +133,3 @@ function collectCoin(sprite, tile) {
     text.setText(score); // set the text to show the current score
     return false;
 }
-
