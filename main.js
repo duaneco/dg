@@ -24,12 +24,14 @@ var groundLayer, coinLayer;
 var text;
 var score = 0;
 var text;
+var jumpCount = 0;
+var maxJumps = 2;
 
 function preload() {
      // map made with Tiled in JSON format
     this.load.tilemapTiledJSON('map', 'assets/map.json');
     // tiles in spritesheet 
-   this.load.image('tiles', 'assets/tiles.png'); // {frameWidth: 70, frameHeight: 70});
+    this.load.image('tiles', 'assets/tiles.png', {frameWidth: 70, frameHeight: 70});
     // simple coin image
     this.load.image('coin', 'assets/coinGold.png');
     // player animations
@@ -116,10 +118,22 @@ function update(time, delta) {
         player.body.setVelocityX(0);
         player.anims.play('idle', true);
     }  
-     // 🟢 JUMPING (add this block)
-    if (cursors.up.isDown && player.body.blocked.down) {
-        player.setVelocityY(-330); // jump height (adjust as needed)
+    // JUMPING + DOUBLE JUMP
+if (Phaser.Input.Keyboard.JustDown(cursors.up)) {
+    if (player.body.blocked.down) {
+        player.setVelocityY(-330);
+        jumpCount = 1;
+    } else if (jumpCount < maxJumps) {
+        player.setVelocityY(-330);
+        jumpCount++;
     }
+}
+
+// Reset jump count when touching the ground
+if (player.body.blocked.down) {
+    jumpCount = 0;
+}
+
 }
 
 // the player will collide with this layer
