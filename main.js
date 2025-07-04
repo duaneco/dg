@@ -1,3 +1,31 @@
+// This is a simple Phaser 3 platformer game with a title screen and basic player movement.
+class TitleScene extends Phaser.Scene {
+    constructor() {
+        super({ key: 'TitleScene' });
+    }
+
+    preload() {
+        // You can preload assets for the title screen here if needed
+       this.load.video('bgVideo', 'assets/tv-screen-.mp4', 'loadeddata', false, true); 
+       this.load.image('playButton', 'assets/play-button.png');
+    }
+
+    create() {
+      // Add the background video
+const video = this.add.video(400, 300, 'bgVideo').setOrigin(0.5);
+video.play(true);
+video.setLoop(true);
+
+
+
+// Add image-based play button at (400, 500) and scale it
+const playButton = this.add.image(400, 500, 'playButton')
+    .setScale(0.5) // adjust the size (0.5 = 50%)
+    .setInteractive({ useHandCursor: true }) // enables click + hover effect
+    .on('pointerdown', () => this.scene.start('main'));
+    }
+}
+
 var config = {
     type: Phaser.AUTO,
     width: 800,
@@ -9,12 +37,13 @@ var config = {
             debug: false
         }
     },
-    scene: {
-        key: 'main',
-        preload: preload,
-        create: create,
-        update: update
-    }
+scene: [TitleScene, {
+    key: 'main',
+    preload: preload,
+    create: create,
+    update: update
+}]
+
 };
 var game = new Phaser.Game(config);
 var map;
@@ -35,7 +64,7 @@ function preload() {
     // simple coin image
     this.load.image('coin', 'assets/coinGold.png');
     // player animations
-    this.load.atlas('player', 'assets/player.png', 'assets/player.json');
+    this.load.atlasXML('player', 'assets/player.png', 'assets/player.xml');
 }
 
 function create() {
@@ -74,17 +103,22 @@ function create() {
     this.physics.add.overlap(player, coinLayer);
     // player walk animation
     this.anims.create({
-        key: 'walk',
-        frames: this.anims.generateFrameNames('player', { prefix: 'p1_walk', start: 1, end: 11, zeroPad: 2 }),
-        frameRate: 10,
-        repeat: -1
-    });
+    key: 'walk',
+    frames: this.anims.generateFrameNames('player', {
+        prefix: 'sprite sheet-knight_',
+        start: 36,
+        end: 41,
+        suffix: '.png'
+    }),
+    frameRate: 10,
+    repeat: -1
+});
      // idle with only one frame, so repeat is not neaded
     this.anims.create({
-        key: 'idle',
-        frames: [{key: 'player', frame: 'p1_stand'}],
-        frameRate: 10,
-    });
+    key: 'idle',
+    frames: [{ key: 'player', frame: 'sprite sheet-knight_38.png' }],
+    frameRate: 10
+});
     cursors = this.input.keyboard.createCursorKeys();
     // set bounds so the camera won't go outside the game world
     this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -118,29 +152,15 @@ function update(time, delta) {
         player.body.setVelocityX(0);
         player.anims.play('idle', true);
     }  
-    // JUMPING + DOUBLE JUMP
-if (Phaser.Input.Keyboard.JustDown(cursors.up)) {
-    if (player.body.blocked.down) {
-        player.setVelocityY(-330);
-        jumpCount = 1;
-    } else if (jumpCount < maxJumps) {
-        player.setVelocityY(-330);
-        jumpCount++;
+    // 🟢 JUMPING (add this block)
+    if (cursors.up.isDown && player.body.blocked.down) {
+        player.setVelocityY(-330); // jump height (adjust as needed)
     }
 }
 
-// Reset jump count when touching the ground
-if (player.body.blocked.down) {
-    jumpCount = 0;
-}
 
-}
 
-// the player will collide with this layer
-function collectCoin(sprite, tile) {
-    coinLayer.removeTileAt(tile.x, tile.y); // remove the tile/coin
-    return false;
-}
+
 function collectCoin(sprite, tile) {
     coinLayer.removeTileAt(tile.x, tile.y); // remove the tile/coin
     score ++; // increment the score
