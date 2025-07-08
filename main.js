@@ -8,6 +8,8 @@ class TitleScene extends Phaser.Scene {
         // You can preload assets for the title screen here if needed
        this.load.video('bgVideo', 'assets/tv-screen-.mp4', 'loadeddata', false, true); 
        this.load.image('playButton', 'assets/play-button.png');
+       this.load.video('transition', 'assets/tv-transition.mp4', 'loadeddata', false, true);
+       
     }
 
     create() {
@@ -22,7 +24,17 @@ video.setLoop(true);
 const playButton = this.add.image(400, 500, 'playButton')
     .setScale(0.5) // adjust the size (0.5 = 50%)
     .setInteractive({ useHandCursor: true }) // enables click + hover effect
-    .on('pointerdown', () => this.scene.start('main'));
+    .on('pointerdown', () => {
+    video.stop(); // stop the looping background video
+    playButton.setVisible(false); // hide play button
+
+const transitionVideo = this.add.video(400, 300, 'transition').setOrigin(0.5);
+    transitionVideo.play();
+    // When the transition ends, start the main game scene
+    transitionVideo.on('complete', () => {
+        this.scene.start('main');
+    });
+});
     }
 }
 
@@ -152,13 +164,23 @@ function update(time, delta) {
         player.body.setVelocityX(0);
         player.anims.play('idle', true);
     }  
-    // 🟢 JUMPING (add this block)
-    if (cursors.up.isDown && player.body.blocked.down) {
-        player.setVelocityY(-330); // jump height (adjust as needed)
+    // JUMPING + DOUBLE JUMP
+if (Phaser.Input.Keyboard.JustDown(cursors.up)) {
+    if (player.body.blocked.down) {
+        player.setVelocityY(-330);
+        jumpCount = 1;
+    } else if (jumpCount < maxJumps) {
+        player.setVelocityY(-330);
+        jumpCount++;
     }
 }
 
+// Reset jump count when touching the ground
+if (player.body.blocked.down) {
+    jumpCount = 0;
+}
 
+}
 
 
 function collectCoin(sprite, tile) {
