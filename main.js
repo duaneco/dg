@@ -170,14 +170,13 @@ function create() {
     });
 
     // Ensure gravity does not affect enemies
+    this.enemies = this.physics.add.group();
     this.physics.world.enable(this.enemies);
     this.enemies.children.iterate(enemy => {
         if (enemy && enemy.body) {
             enemy.body.allowGravity = false;
         }
     });
-
-    this.enemies = this.physics.add.group();
 
     // Create a few flying enemies at random positions
     // Adjust the number of enemies as needed
