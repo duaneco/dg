@@ -103,14 +103,13 @@ function create() {
 
     textScore.setScrollFactor(0);
     textScore.setText('🪙: ' + score);
-    
+
     textHealth = this.add.text(20, 550, '❤️: 100%', {
         fontSize: '20px',
         fill: '#ffffff'
     });
-    textHealth.setScrollFactor(0);
     textHealth.setText('❤️: ' + playerHealthPercentage + '%');
-
+    textHealth.setScrollFactor(0);
     cursors = this.input.keyboard.createCursorKeys();
     this.physics.add.collider(groundLayer, player); // player collides with ground
 
@@ -163,4 +162,21 @@ function create() {
         },
         loop: true
     });
+
+    this.physics.add.collider(player, this.enemies, (playerObj, enemyObj) => {
+        playerHealthPercentage -= 10; // Decrease health by 10% (adjust as needed)
+        playerHealthPercentage = Math.max(playerHealthPercentage, 0); // Prevent negative health
+
+        if (playerHealthPercentage === 0) {
+            this.physics.pause();
+            this.add.text(
+                this.cameras.main.centerX,
+                this.cameras.main.centerY,
+                'Game Over',
+                { fontSize: '48px', fill: '#ff0000' }
+            ).setOrigin(0.5).setScrollFactor(0);
+        }
+
+        textHealth.setText('❤️: ' + playerHealthPercentage + '%');
+    }, null, this);
 }
