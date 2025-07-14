@@ -54,7 +54,8 @@ var config = {
         update: update
     }]
 
-};``
+};
+
 var game = new Phaser.Game(config);
 var map;
 var player;
