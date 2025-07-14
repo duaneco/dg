@@ -18,8 +18,6 @@ class TitleScene extends Phaser.Scene {
         video.play(true);
         video.setLoop(true);
 
-
-
         // Add image-based play button at (400, 500) and scale it
         const playButton = this.add.image(400, 500, 'playButton')
             .setScale(0.5) // adjust the size (0.5 = 50%)
@@ -80,7 +78,6 @@ function preload() {
 
     this.load.image('exit', 'assets/exit-button.png', 'loadeddata');
     this.load.atlas('enemy', 'assets/bats.png', 'assets/bats.json');
-
 }
 
 function create() {
@@ -114,9 +111,18 @@ function create() {
 
     // set background color, so the sky is not black    
     this.cameras.main.setBackgroundColor('#ccccff');
-    coinLayer.setTileIndexCallback(17, collectCoin, this); // the coin id is 17
-    // when the player overlaps with a tile with index 17, collectCoin will be called    
-    this.physics.add.overlap(player, coinLayer);
+    
+    // COLLISION BETWEEN PLAYER AND COINS
+    // When the player overlaps with a coin, call collectCoin function
+    // Use a callback to ensure collectCoin is only called when a coin tile is hit
+    this.physics.add.overlap(player, coinLayer, (player, tile) => {
+        // tile is the tile the player overlapped with
+        // tile.index is the index of the tile in the tileset, -1 means empty
+        if (tile && tile.index !== -1) {
+            collectCoin(player, tile);
+        }
+    }, null, this);// overlap instead of collider, so we don't bounce when we touch a coin
+
     // player walk animation
     this.anims.create({
         key: 'walk',
@@ -135,6 +141,9 @@ function create() {
         .setScale(0.5)
         .setInteractive({ useHandCursor: true })
         .on('pointerdown', () => {
+            score = 0; // reset score
+            jumpCount = 0; // reset jump count
+            player.setVelocity(0, 0); // stop player movement
             this.scene.start('TitleScene');
         });
     exitButton.setScrollFactor(0); // lock to camera
@@ -158,6 +167,7 @@ function create() {
     text.setScrollFactor(0);
     cursors = this.input.keyboard.createCursorKeys();
     this.physics.add.collider(groundLayer, player); // player collides with ground
+
     // Create enemy animations
     // Flying enemy animation
     this.anims.create({
@@ -210,7 +220,6 @@ function create() {
         loop: true
     });
 
-
 }
 // Spawn flying enemies periodically
 function spawnFlyingEnemy(scene, player) {
@@ -234,7 +243,8 @@ function spawnFlyingEnemy(scene, player) {
     return enemy;
 }
 
-
+// `update` function to handle player movement and jumping
+// This function is called 60 times per second (60 FPS)
 function update(time, delta) {
 
     // Horizontal movement
@@ -322,10 +332,13 @@ function update(time, delta) {
 
 }
 
-
+// `collectCoin` function to handle collecting a coin
+// This function is called when the player overlaps with a coin tile
 function collectCoin(sprite, tile) {
+    // Prevent multiple overlaps by disabling the tile immediately
+    coinLayer.putTileAt(-1, tile.x, tile.y); // set to empty tile
     coinLayer.removeTileAt(tile.x, tile.y);
     score++;
     text.setText(score);
-    return false;
+    return false; // return false to prevent further processing of this overlap
 }
