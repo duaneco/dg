@@ -11,7 +11,8 @@ function preload() {
     this.load.image('exit', 'assets/exit-button.png', 'loadeddata');
     this.load.atlas('enemy', 'assets/bats.png', 'assets/bats.json');
 }
- function create() {
+
+function create() {
     // load the map 
     map = this.make.tilemap({ key: 'map' });
 
@@ -75,6 +76,7 @@ function preload() {
         .on('pointerdown', () => {
             score = 0; // reset score
             jumpCount = 0; // reset jump count
+            playerHealthPercentage = 100; // reset health
             player.setVelocity(0, 0); // stop player movement
             this.scene.start('TitleScene');
         });
@@ -94,12 +96,21 @@ function preload() {
     this.cameras.main.startFollow(player);
     // set background color, so the sky is not black    
     this.cameras.main.setBackgroundColor('#ccccff');
-    text = this.add.text(20, 570, '0', {
+    textScore = this.add.text(20, 570, '🪙: 0', {
         fontSize: '20px',
         fill: '#ffffff'
     });
 
-    text.setScrollFactor(0);
+    textScore.setScrollFactor(0);
+    textScore.setText('🪙: ' + score);
+    
+    textHealth = this.add.text(20, 550, '❤️: 100%', {
+        fontSize: '20px',
+        fill: '#ffffff'
+    });
+    textHealth.setScrollFactor(0);
+    textHealth.setText('❤️: ' + playerHealthPercentage + '%');
+
     cursors = this.input.keyboard.createCursorKeys();
     this.physics.add.collider(groundLayer, player); // player collides with ground
 

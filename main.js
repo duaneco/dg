@@ -9,7 +9,6 @@ class TitleScene extends Phaser.Scene {
         this.load.video('bgVideo', 'assets/tv-screen-.mp4', 'loadeddata', false, true);
         this.load.image('playButton', 'assets/play-button.png');
         this.load.video('transition', 'assets/tv-transition.mp4', 'loadeddata', false, true);
-
     }
 
     create() {
@@ -61,11 +60,13 @@ var map;
 var player;
 var cursors;
 var groundLayer, coinLayer;
-var text;
+var textScore;
+var textHealth;
 var score = 0;
 var jumpCount = 0;
 var maxJumps = 2;
 var isparent = false; // Example variable to check if a parent exists
+var playerHealthPercentage = 100;
 
 // `update` function to handle player movement and jumping
 // This function is called 60 times per second (60 FPS)
