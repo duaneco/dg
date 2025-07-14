@@ -1,7 +1,5 @@
-import { map } from "./main";
-
 // Spawn flying enemies periodically
-export function spawnFlyingEnemy(scene, player) {
+function spawnFlyingEnemy(scene, player) {
     const spawnLeft = Phaser.Math.Between(0, 1) === 0;
     const x = spawnLeft ? -100 : map.widthInPixels + 100;
     const y = Phaser.Math.Between(500, 600);

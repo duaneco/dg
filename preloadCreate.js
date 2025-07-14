@@ -1,8 +1,4 @@
-import { collectCoin } from "./collectCoin";
-import { map, coinLayer, groundLayer, player, cursors, score, jumpCount, text } from "./main";
-import { spawnFlyingEnemy } from "./spawnFlyingEnemy";
-
-export function preload() {
+function preload() {
     // map made with Tiled in JSON format
     this.load.tilemapTiledJSON('map', 'assets/map.json');
     // tiles in spritesheet 
@@ -15,7 +11,7 @@ export function preload() {
     this.load.image('exit', 'assets/exit-button.png', 'loadeddata');
     this.load.atlas('enemy', 'assets/bats.png', 'assets/bats.json');
 }
-export function create() {
+ function create() {
     // load the map 
     map = this.make.tilemap({ key: 'map' });
 

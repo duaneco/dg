@@ -1,5 +1,3 @@
-import { preload, create } from "./preloadCreate";
-
 // This is a simple Phaser 3 platformer game with a title screen and basic player movement.
 class TitleScene extends Phaser.Scene {
     constructor() {
@@ -56,15 +54,15 @@ var config = {
         update: update
     }]
 
-};
+};``
 var game = new Phaser.Game(config);
-export var map;
-export var player;
-export var cursors;
-export var groundLayer, coinLayer;
-export var text;
-export var score = 0;
-export var jumpCount = 0;
+var map;
+var player;
+var cursors;
+var groundLayer, coinLayer;
+var text;
+var score = 0;
+var jumpCount = 0;
 var maxJumps = 2;
 var isparent = false; // Example variable to check if a parent exists
 
