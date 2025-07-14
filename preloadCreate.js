@@ -172,7 +172,7 @@ function create() {
             this.add.text(
                 this.cameras.main.centerX,
                 this.cameras.main.centerY,
-                'Game Over',
+                '💀 Ooof',
                 { fontSize: '48px', fill: '#ff0000' }
             ).setOrigin(0.5).setScrollFactor(0);
         }
