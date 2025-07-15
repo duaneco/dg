@@ -135,12 +135,14 @@ function create() {
 
     // Create a few flying enemies at random positions
     // Adjust the number of enemies as needed
+    
     for (let i = 0; i < 5; i++) {
         const x = Phaser.Math.Between(100, map.widthInPixels - 100);
         const y = Phaser.Math.Between(100, map.heightInPixels - 200);
 
         const enemy = this.enemies.create(x, y, 'enemy', 'fly1');
         enemy.play('fly');
+        enemy.setScale(1.9); // <-- Add this line to scale up the bat
 
         // Add random velocity for flying behavior
         enemy.setVelocity(
@@ -150,18 +152,27 @@ function create() {
 
         enemy.setBounce(1, .5); // bounce off walls
         enemy.setCollideWorldBounds(true);
-    }
 
+        // Disable gravity for this enemy
+        if (enemy.body) {
+            enemy.body.allowGravity = false;
+        }
+    }
     // Optional: Add collision with ground layer
     this.physics.add.collider(this.enemies, groundLayer);
 
+
+    // Change X to your desired delay in milliseconds (e.g., 3000 for 3 seconds)
+    const BAT_SPAWN_DELAY = 3000;
+
     this.time.addEvent({
-        delay: 3000, // spawn every 3 seconds
+        delay: BAT_SPAWN_DELAY,
         callback: () => {
             spawnFlyingEnemy(this, player);
         },
         loop: true
     });
+
 
     this.physics.add.collider(player, this.enemies, (playerObj, enemyObj) => {
         playerHealthPercentage -= 10; // Decrease health by 10% (adjust as needed)
